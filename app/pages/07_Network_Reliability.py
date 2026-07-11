@@ -43,7 +43,7 @@ def main():
             title="Communication Performance Scatter"
         )
         fig_scatter.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#e0e0e0')
-        st.plotly_chart(fig_scatter, use_container_width=True)
+        st.plotly_chart(fig_scatter, width="stretch")
         st.info(
             "**What this shows:** A scatter plot mapping communication latency (ms) against packet loss (%) for a random sample of telemetry records.\n\n"
             "**Why it matters:** Cluster patterns of High risk at elevated packet loss/latency suggest network bottlenecks are coinciding with (or causing) telemetry instability.\n\n"
@@ -66,7 +66,7 @@ def main():
             title="Operational vs. Network Instability Over Time"
         )
         fig_line.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#e0e0e0')
-        st.plotly_chart(fig_line, use_container_width=True)
+        st.plotly_chart(fig_line, width="stretch")
         st.info(
             "**What this shows:** The daily trend of mean machine risk alongside mean network instability.\n\n"
             "**Why it matters:** Coinciding peaks indicate connection drops and machine warnings are linked, pointing to potential power source fluctuations or data transmission drops.\n\n"

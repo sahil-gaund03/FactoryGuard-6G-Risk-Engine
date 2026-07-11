@@ -66,7 +66,7 @@ def main():
             
             # Format and display
             lead_df.columns = ['PR-AUC (Primary)', 'ROC-AUC', 'Precision', 'Recall', 'F2 Score', 'Brier Score', 'Model Name']
-            st.dataframe(lead_df, use_container_width=True)
+            st.dataframe(lead_df, width="stretch")
             
             st.info(
                 "**Selection Rule:** The model with the highest test **PR-AUC** (Precision-Recall Area Under Curve) is designated as the production predictor.\n\n"

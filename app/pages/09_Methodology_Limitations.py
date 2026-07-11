@@ -29,7 +29,7 @@ def main():
         """)
         
         st.subheader("Analytical Track B: Supervised Deterioration Proxy")
-        st.markdown("""
+        st.markdown(r"""
         * **Model:** Calibrated XGBoost Classifier selected from a temporal cross-validation leaderboard.
         * **Target Definition:** Binary lookahead target (24-hour horizon) indicating if the machine is headed for severe degradation (defined as sustained heat $\ge 75^\circ\text{C}$, sustained vibration $\ge 3.0\text{ Hz}$, or sustained error rates $\ge 9\%$).
         * **Calibration:** Platt Sigmoid scaling mapping raw predictions to actual probabilities.

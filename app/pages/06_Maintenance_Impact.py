@@ -117,14 +117,14 @@ def main():
             color_discrete_map={'Pre-Maintenance': '#ff9800', 'Post-Maintenance': '#4caf50'}
         )
         fig_box.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#e0e0e0')
-        st.plotly_chart(fig_box, use_container_width=True)
+        st.plotly_chart(fig_box, width="stretch")
         
     st.write("---")
     st.subheader("Detailed Maintenance Log")
     log_display = impact_df.copy()
     log_display.columns = ['Machine ID', 'Maintenance Start', 'Maintenance End', 'Pre-Maint Risk Score', 'Post-Maint Risk Score', 'Risk Reduction']
     log_display = log_display.sort_values(by='Maintenance Start', ascending=False)
-    st.dataframe(log_display, use_container_width=True)
+    st.dataframe(log_display, width="stretch")
     
     st.info(
         "**What this shows:** The diagnostic effectiveness of scheduled maintenance periods.\n\n"

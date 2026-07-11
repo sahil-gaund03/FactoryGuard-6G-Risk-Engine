@@ -50,7 +50,7 @@ def main():
         esc_display.reset_index(drop=True, inplace=True)
         esc_display.index += 1
         
-        st.dataframe(esc_display, use_container_width=True)
+        st.dataframe(esc_display, width="stretch")
         
     with col2:
         st.subheader("Worsening Risk Rate (Score Increase)")
@@ -62,7 +62,7 @@ def main():
             color_discrete_sequence=['#ff5252']
         )
         fig_bar.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#e0e0e0')
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, width="stretch")
         
     st.info(
         "**What this shows:** Machine units ordered by the rate of their risk score increase.\n\n"

@@ -63,7 +63,7 @@ def main():
             title="Temperature & Vibration Readings"
         )
         fig_temp.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#e0e0e0')
-        st.plotly_chart(fig_temp, use_container_width=True)
+        st.plotly_chart(fig_temp, width="stretch")
         st.info(
             "**What this shows:** The raw sensor timeline of temperature (°C) and vibration (Hz) for this machine.\n\n"
             "**Operational Interpretation:** Check if temperature and vibration spikes occur concurrently, which typically points to bearing lubrication degradation."
@@ -78,7 +78,7 @@ def main():
             title="Fused Risk Index Timeline"
         )
         fig_risk.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#e0e0e0')
-        st.plotly_chart(fig_risk, use_container_width=True)
+        st.plotly_chart(fig_risk, width="stretch")
         st.info(
             "**What this shows:** The fused health risk rating (0-100) trend for this machine unit.\n\n"
             "**Operational Interpretation:** Look for gradual, upward slopes which represent cumulative wear, rather than short transient spikes."

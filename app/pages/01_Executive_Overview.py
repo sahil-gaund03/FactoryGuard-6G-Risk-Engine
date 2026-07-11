@@ -47,7 +47,7 @@ def main():
             hole=0.4
         )
         fig_pie.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#e0e0e0')
-        st.plotly_chart(fig_pie, use_container_width=True)
+        st.plotly_chart(fig_pie, width="stretch")
         
         st.info(
             "**What this shows:** The relative proportion of all observations classified as Low, Medium, or High risk.\n\n"
@@ -68,7 +68,7 @@ def main():
             color_discrete_sequence=['#00e5ff']
         )
         fig_line.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#e0e0e0')
-        st.plotly_chart(fig_line, use_container_width=True)
+        st.plotly_chart(fig_line, width="stretch")
         
         st.info(
             "**What this shows:** The chronological daily average of fused risk scores across the active fleet.\n\n"
