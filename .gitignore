@@ -30,9 +30,8 @@ venv/
 ENV/
 env/
 
-# Data and models
+# Data and models (keep processed predictions for Streamlit Cloud)
 data/interim/
-data/processed/
 data/features/
 data/predictions/
 data/reports/

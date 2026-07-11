@@ -77,8 +77,11 @@ def load_custom_css():
 
 @st.cache_data
 def load_predictions_data():
-    """Load and cache the final predictions dataset."""
-    file_path = DATA_PROCESSED / "final_risk_predictions.parquet"
+    """Load and cache the dashboard predictions dataset."""
+    # Try slim dashboard file first (for Streamlit Cloud), fallback to full file
+    file_path = DATA_PROCESSED / "dashboard_data.parquet"
+    if not file_path.exists():
+        file_path = DATA_PROCESSED / "final_risk_predictions.parquet"
     if not file_path.exists():
         return None
     df = pd.read_parquet(file_path)
