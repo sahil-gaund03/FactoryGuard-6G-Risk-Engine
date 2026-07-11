@@ -1,0 +1,12 @@
+{
+    "total_observations": 99972,
+    "machines_count": 50,
+    "date_min": "2025-01-01 00:00:00",
+    "date_max": "2025-03-10 10:39:00",
+    "active_records_pct": 70.05561557236027,
+    "idle_records_pct": 20.05561557236026,
+    "maintenance_records_pct": 9.888768855279478,
+    "low_efficiency_pct": 77.82579122154203,
+    "medium_efficiency_pct": 19.18737246429,
+    "high_efficiency_pct": 2.986836314167967
+}

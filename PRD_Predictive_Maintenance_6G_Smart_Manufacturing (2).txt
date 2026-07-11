@@ -1,0 +1,1968 @@
+PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
+Project Title:
+Predictive Maintenance and Anomaly Detection in 6G-Integrated Smart Manufacturing Systems
+
+Product Name:
+FactoryGuard 6G
+
+Prepared For:
+Unified Mentor / Thales Group Manufacturing Analytics Project
+
+Prepared By:
+Sahil Gaund
+
+Version:
+1.0
+
+Date:
+25 June 2026
+
+Document Status:
+Implementation-ready product requirements for use with Antigravity and subsequent project documents.
+
+===============================================================================
+1. EXECUTIVE PRODUCT SUMMARY
+===============================================================================
+
+FactoryGuard 6G is a predictive-maintenance and anomaly-intelligence platform for smart manufacturing environments. It analyzes machine sensor readings, production behavior, quality indicators, and 6G-network reliability signals to identify subtle abnormal patterns before they develop into serious operational problems.
+
+The product is not limited to reporting current manufacturing efficiency. Its primary purpose is to answer five operational questions:
+
+1. Which machines are behaving abnormally right now?
+2. Is the abnormal behavior isolated, persistent, or escalating?
+3. Which sensor or network signals are contributing to the risk?
+4. Which machines should maintenance teams inspect first?
+5. Is machine behavior improving after maintenance or intervention?
+
+The platform must combine exploratory data analysis, machine-specific baseline modeling, unsupervised anomaly detection, temporal escalation analysis, explainable risk scoring, and an interactive Streamlit application.
+
+The final product must be understandable to both technical and non-technical users. Every important visualization must explain:
+- What happened
+- Why it matters
+- What signals contributed
+- What action is recommended
+- Whether the result is observed, model-derived, or a proxy estimate
+
+The project must never present an anomaly as a confirmed mechanical failure unless a verified failure label exists. The supplied dataset has no explicit breakdown, downtime, repair, or component-failure event field. Therefore, this project will produce risk intelligence and early-warning indicators, not unsupported claims of confirmed failure prediction.
+
+===============================================================================
+2. BACKGROUND AND BUSINESS CONTEXT
+===============================================================================
+
+Modern intelligent factories depend on interconnected machines, industrial sensors, automated production systems, quality-control systems, and low-latency communications. In these environments:
+
+- Machine failures may be rare but extremely costly.
+- A small degradation can affect production speed, product quality, energy consumption, and safety.
+- Traditional static thresholds cannot adapt to differences between machines, operating modes, or production conditions.
+- Subtle multidimensional changes may appear long before a visible efficiency decline.
+- Network latency and packet loss may affect the reliability and timeliness of machine communication.
+- Maintenance teams need prioritized and explainable alerts rather than large volumes of raw sensor data.
+
+A 6G-integrated factory can potentially support near-real-time sensing and decision-making. In this project, the 6G context is represented through network latency and packet-loss indicators. These fields will be analyzed as operational communication signals; the system must not claim to model a complete commercial 6G network stack.
+
+The desired operational transition is:
+
+Reactive maintenance
+→ Scheduled maintenance
+→ Condition-based maintenance
+→ Predictive and risk-prioritized maintenance
+
+===============================================================================
+3. PROBLEM STATEMENT
+===============================================================================
+
+Manufacturing organizations face unexpected machine breakdowns, production interruption, high maintenance expenditure, quality defects, energy instability, and difficulty detecting early warning signs in noisy sensor data.
+
+Traditional rule-based monitoring is inadequate because:
+
+- Normal ranges vary across Machine_ID.
+- Normal ranges vary across Operation_Mode.
+- A value may be normal in isolation but abnormal in combination with other values.
+- Early warning patterns may be gradual rather than abrupt.
+- A single global threshold can produce excessive false alerts.
+- A momentary spike may be harmless, while a persistent moderate deviation may be dangerous.
+- Communication instability can coincide with operational instability.
+- Current efficiency labels describe the present state but do not necessarily identify emerging health risk.
+
+FactoryGuard 6G must learn machine- and mode-specific normal behavior, detect rare and abnormal combinations, monitor risk over time, and convert model outputs into prioritized maintenance decisions.
+
+===============================================================================
+4. PRODUCT VISION
+===============================================================================
+
+Create an operational-intelligence platform that enables factory supervisors, maintenance engineers, reliability teams, analysts, and government or executive stakeholders to identify emerging machine-health risks early, understand the reasons behind those risks, and prioritize inspection or intervention using evidence-based recommendations.
+
+The platform should feel like a practical industrial decision-support system, not only a collection of charts or a classroom notebook.
+
+===============================================================================
+5. PRODUCT OBJECTIVES
+===============================================================================
+
+5.1 Primary Objectives
+
+- Establish a reliable machine-specific and operation-mode-specific behavioral baseline.
+- Detect rare, multidimensional, and temporally persistent anomalies.
+- Generate a normalized anomaly score for every observation.
+- Translate anomaly scores into Low, Medium, and High maintenance-risk levels.
+- Detect machines whose risk is escalating over time.
+- Identify the sensor, production, quality, or network signals contributing to each alert.
+- Provide a prioritized high-risk machine list.
+- Compare pre-maintenance and post-maintenance behavior where maintenance-mode observations permit a valid comparison.
+- Communicate results clearly to non-technical users.
+- Produce reproducible analytics and deployment-ready project outputs.
+
+5.2 Secondary Objectives
+
+- Analyze the relationship between network reliability and operational anomalies.
+- Evaluate whether anomaly risk precedes future efficiency degradation.
+- Provide configurable alert thresholds and time windows.
+- Support exportable maintenance-alert and executive-summary reports.
+- Prepare the architecture for future live-stream integration.
+
+5.3 Non-Goals
+
+The initial version must not:
+
+- Claim confirmed equipment failure without failure-event ground truth.
+- Claim exact remaining useful life without labeled degradation-to-failure sequences.
+- Claim exact downtime or monetary savings without validated downtime and cost records.
+- Diagnose a specific mechanical component when component-level sensor or repair data is unavailable.
+- Control machinery automatically.
+- Trigger autonomous shutdowns.
+- Replace a qualified maintenance engineer.
+- Present simulated streaming data as actual live factory data.
+- Treat Efficiency_Status as the sole definition of machine health.
+
+===============================================================================
+6. SUCCESS CRITERIA
+===============================================================================
+
+The project will be considered successful when:
+
+- All 100,000 supplied records are validated and processed reproducibly.
+- Machine- and mode-aware baselines are implemented.
+- Every record receives an anomaly score and risk classification.
+- High-risk alerts include contributing factors and recommended next actions.
+- Risk escalation can be viewed over time for each machine.
+- The dashboard supports machine, mode, risk threshold, and time-window filters.
+- The model is evaluated with time-aware validation rather than random-only splitting.
+- Proxy early-warning performance is measured against future deterioration events.
+- False-alert rate and alert persistence are reported.
+- No target leakage is present in the core anomaly model.
+- Every executive visualization includes business meaning and action guidance.
+- All proxy metrics are labeled as proxies.
+- The Streamlit interface remains usable and understandable without reading the source code.
+- The research paper, dashboard, executive summary, and model artifacts are consistent with one another.
+
+===============================================================================
+7. TARGET USERS AND STAKEHOLDERS
+===============================================================================
+
+7.1 Maintenance Engineer
+
+Primary needs:
+- Identify machines requiring inspection.
+- Understand which signals are abnormal.
+- Distinguish transient spikes from persistent risk.
+- Review recent risk history.
+- Compare behavior before and after maintenance.
+
+Key decisions:
+- Inspect now, schedule inspection, monitor, or dismiss as transient.
+- Determine which machine should receive priority.
+
+7.2 Factory Operations Manager
+
+Primary needs:
+- View plant-wide risk distribution.
+- Understand production and quality impact.
+- Identify operational modes associated with elevated risk.
+- Monitor risk trends and intervention outcomes.
+
+Key decisions:
+- Reallocate production.
+- Adjust operating mode.
+- Coordinate maintenance windows.
+- Escalate urgent risk.
+
+7.3 Reliability or Data Analyst
+
+Primary needs:
+- Explore sensor relationships.
+- Validate anomaly behavior.
+- Tune thresholds.
+- Compare models.
+- Audit false alerts and missed deterioration events.
+
+Key decisions:
+- Approve model version.
+- Adjust detection sensitivity.
+- Investigate data-quality problems.
+- Recommend additional sensors or labels.
+
+7.4 Executive or Government Stakeholder
+
+Primary needs:
+- Understand plant-level operational risk without technical jargon.
+- See key risk, reliability, quality, and production indicators.
+- Understand limitations and confidence.
+- Review recommendations and expected operational value.
+
+Key decisions:
+- Approve maintenance priorities.
+- Fund data-quality or monitoring improvements.
+- Evaluate readiness for broader industrial deployment.
+
+7.5 System Administrator or Project Evaluator
+
+Primary needs:
+- Reproduce results.
+- Verify data lineage.
+- Review project structure.
+- Test application reliability.
+- Confirm that secrets and files are handled securely.
+
+===============================================================================
+8. SUPPLIED DATASET AUDIT
+===============================================================================
+
+Dataset:
+Thales_Group_Manufacturing.csv
+
+Observed dataset profile:
+- Total records: 100,000
+- Total columns: 14
+- Unique machines: 50
+- Date range: 1 January 2025 to 10 March 2025
+- Missing values: 0
+- Exact duplicate rows: 0
+- Duplicate Machine_ID + timestamp combinations: 28
+- Operation modes:
+  - Active: 70,054 records
+  - Idle: 20,057 records
+  - Maintenance: 9,889 records
+- Efficiency status:
+  - Low: 77,825 records
+  - Medium: 19,189 records
+  - High: 2,986 records
+
+Important dataset observations:
+- The actual time column is named Timestamp, not Time.
+- Operation_Mode values are Active, Idle, and Maintenance.
+- Efficiency_Status is highly imbalanced toward Low.
+- The dataset contains no explicit failure-event label.
+- The dataset contains no downtime-duration field.
+- The dataset contains no repair-action or maintenance-work-order identifier.
+- The dataset contains no component type or failure mode.
+- The dataset contains no direct monetary cost field.
+- Machine observations are not evenly spaced per machine.
+- Per-machine time gaps vary because records are distributed across machines.
+- Some machines have more than one record at the same timestamp.
+- Temporal features must therefore be calculated after sorting by Machine_ID and datetime.
+- Time-based windows must use actual timestamps or carefully documented observation windows.
+
+These constraints must be visible in the research paper and application documentation.
+
+===============================================================================
+9. DATA DICTIONARY
+===============================================================================
+
+9.1 Source Fields
+
+Date
+- Meaning: Calendar date of observation.
+- Type: String in source; convert to date.
+- Required: Yes.
+
+Timestamp
+- Meaning: Exact time of observation.
+- Type: String in source; combine with Date.
+- Required: Yes.
+
+Machine_ID
+- Meaning: Unique machine identifier.
+- Type: Integer or categorical identifier.
+- Required: Yes.
+- Rule: Never treat as a continuous numerical measurement.
+
+Operation_Mode
+- Meaning: Current machine mode.
+- Observed values: Active, Idle, Maintenance.
+- Type: Categorical.
+- Required: Yes.
+
+Temperature_C
+- Meaning: Machine operating temperature in degrees Celsius.
+- Type: Numeric.
+- Required: Yes.
+
+Vibration_Hz
+- Meaning: Machine vibration frequency in Hertz.
+- Type: Numeric.
+- Required: Yes.
+
+Power_Consumption_kW
+- Meaning: Electrical power consumption in kilowatts.
+- Type: Numeric.
+- Required: Yes.
+
+Network_Latency_ms
+- Meaning: Communication latency in milliseconds.
+- Type: Numeric.
+- Required: Yes.
+
+Packet_Loss_%
+- Meaning: Percentage of communication packets lost.
+- Type: Numeric.
+- Required: Yes.
+
+Quality_Control_Defect_Rate_%
+- Meaning: Percentage of defective output.
+- Type: Numeric.
+- Required: Yes.
+
+Production_Speed_units_per_hr
+- Meaning: Number of units produced per hour.
+- Type: Numeric.
+- Required: Yes.
+
+Predictive_Maintenance_Score
+- Meaning: Existing AI-derived maintenance readiness score.
+- Type: Numeric.
+- Required: Yes.
+- Leakage rule: Exclude from the core anomaly model unless its generation method is documented. Use primarily for external comparison, trend analysis, and optional augmented experiments.
+
+Error_Rate_%
+- Meaning: Operational error percentage.
+- Type: Numeric.
+- Required: Yes.
+
+Efficiency_Status
+- Meaning: Current manufacturing efficiency class.
+- Observed values: High, Medium, Low.
+- Type: Categorical.
+- Role: Contextual outcome and future-deterioration proxy, not the unsupervised anomaly target.
+- Leakage rule: Never include as an input to the core anomaly model.
+
+9.2 Required Derived Fields
+
+datetime
+- Combined Date and Timestamp.
+- Must use day-first date parsing.
+
+machine_mode_key
+- Machine_ID + Operation_Mode.
+
+anomaly_score_raw
+- Native model decision score.
+
+anomaly_score_normalized
+- Normalized 0–100 score where higher means more abnormal.
+
+risk_level
+- Low, Medium, or High.
+
+risk_persistence_count
+- Number of consecutive or recent observations above the warning threshold.
+
+risk_trend_slope
+- Direction and rate of anomaly-score change.
+
+top_contributing_features
+- Ranked signals contributing to anomaly risk.
+
+alert_reason
+- Plain-language explanation.
+
+recommended_action
+- Monitor, inspect during next window, urgent inspection, or investigate data/network quality.
+
+confidence_or_evidence_strength
+- Low, Medium, or High evidence strength based on persistence, model agreement, and data sufficiency.
+
+is_proxy_metric
+- Boolean marker for estimated metrics.
+
+model_version
+- Identifier of the model producing the score.
+
+===============================================================================
+10. DATA QUALITY AND GOVERNANCE REQUIREMENTS
+===============================================================================
+
+10.1 Ingestion Validation
+
+The system must:
+- Verify that all expected columns exist.
+- Validate numeric data types.
+- Parse date and time safely.
+- Reject or quarantine invalid timestamps.
+- Detect missing values.
+- Detect exact duplicate records.
+- Detect duplicate Machine_ID + datetime records.
+- Check impossible or out-of-range values.
+- Confirm known categorical values.
+- Produce a data-quality summary before modeling.
+
+10.2 Duplicate Timestamp Handling
+
+For duplicate Machine_ID + datetime observations:
+- Do not silently delete records.
+- Inspect whether measurements are identical.
+- If identical, retain one and log the deduplication.
+- If different, aggregate only with a documented method or assign a sequence identifier.
+- Record the decision in the data-quality report.
+
+10.3 Outlier Handling
+
+Because the project is about anomaly detection:
+- Do not automatically remove extreme values.
+- Distinguish data errors from potentially meaningful anomalies.
+- Remove or correct a value only when there is strong evidence of invalid data.
+- Log all removals or corrections.
+
+10.4 Data Lineage
+
+The project must retain:
+- Original raw dataset unchanged.
+- Cleaned dataset.
+- Feature-engineered dataset.
+- Training metadata.
+- Model configuration.
+- Threshold configuration.
+- Generated predictions.
+- Model version and creation timestamp.
+
+10.5 Ethical and Operational Guardrails
+
+The dashboard must state:
+- Alerts are decision-support signals.
+- High risk does not prove a failure.
+- Maintenance personnel must validate recommendations.
+- Poor sensor or network data can create false alerts.
+- Model results must be monitored after deployment.
+
+===============================================================================
+11. ANALYTICAL APPROACH
+===============================================================================
+
+11.1 Exploratory Data Analysis
+
+EDA must cover:
+- Dataset dimensions and quality.
+- Date range and observation frequency.
+- Machine-level record counts.
+- Operation-mode distribution.
+- Efficiency-status imbalance.
+- Sensor distributions.
+- Production and quality distributions.
+- Network-latency and packet-loss distributions.
+- Correlation matrix with cautious interpretation.
+- Machine-level and mode-level comparisons.
+- Time-series trends.
+- Maintenance-score trends.
+- Error and defect-rate relationships.
+- Sensor behavior before transitions into Low efficiency.
+- Active versus Idle versus Maintenance behavior.
+- Data gaps and duplicate machine timestamps.
+
+Every EDA chart in the final paper must include:
+- Business question
+- Observation
+- Operational interpretation
+- Limitation
+- Recommended follow-up
+
+11.2 Baseline Behavior Modeling
+
+The system must learn normal behavior by:
+- Machine_ID
+- Operation_Mode
+- Machine_ID + Operation_Mode where sufficient data exists
+
+The baseline must use robust statistics:
+- Median
+- Median absolute deviation
+- Interquartile range
+- Rolling median
+- Exponentially weighted mean
+- Rolling quantiles
+
+Fallback hierarchy:
+1. Machine + mode baseline
+2. Machine baseline
+3. Mode baseline
+4. Global baseline
+
+A baseline must not be used when the sample count is below a configurable minimum.
+
+11.3 Core Modeling Feature Policy
+
+The core anomaly model should include:
+- Temperature_C
+- Vibration_Hz
+- Power_Consumption_kW
+- Network_Latency_ms
+- Packet_Loss_%
+- Quality_Control_Defect_Rate_%
+- Production_Speed_units_per_hr
+- Error_Rate_%
+- Engineered deviation and trend features
+
+The core anomaly model must exclude:
+- Efficiency_Status
+- Predictive_Maintenance_Score
+- Raw Machine_ID as a continuous value
+- Any future-derived feature
+- Any risk label generated from the same model
+
+An optional augmented experiment may include Predictive_Maintenance_Score features only if:
+- It is clearly separated from the core model.
+- Leakage risk is discussed.
+- Results are not presented as the primary unbiased model.
+- Its provenance is documented or acknowledged as unknown.
+
+===============================================================================
+12. FEATURE ENGINEERING REQUIREMENTS
+===============================================================================
+
+12.1 Time Features
+
+- Hour of day
+- Day of week
+- Elapsed time
+- Time since previous observation for the same machine
+- Time since most recent Maintenance-mode observation
+- Observation density over recent time
+
+12.2 Machine- and Mode-Normalized Features
+
+For each core numeric signal:
+- Difference from machine median
+- Difference from machine-mode median
+- Robust z-score using median absolute deviation
+- Percentage deviation from rolling baseline
+- Distance from rolling interquartile range
+- Rank or percentile within machine-mode history
+
+12.3 Rolling Features
+
+For configurable windows:
+- Rolling mean
+- Rolling median
+- Rolling standard deviation
+- Rolling minimum
+- Rolling maximum
+- Rolling range
+- Exponentially weighted mean
+- Exponentially weighted variance
+- Short-window versus long-window difference
+- Trend slope
+- Rate of change
+- Acceleration where meaningful
+
+Default window strategy:
+- Use timestamp-aware windows when possible.
+- Provide observation-based fallback windows for sparse machine sequences.
+- Clearly document the chosen method.
+
+12.4 Domain Interaction Features
+
+- Vibration-to-power ratio
+- Vibration instability multiplied by temperature deviation
+- Error-rate escalation
+- Defect-rate escalation
+- Production-speed decline
+- Power per production unit
+- Error rate per production unit
+- Defect rate per production unit
+- Latency and packet-loss interaction
+- Network instability index
+- Sensor instability index
+- Production-quality stress index
+- Multi-signal deviation count
+- Number of signals outside machine-mode robust range
+
+12.5 Maintenance Score Features
+
+For analysis or optional augmented modeling:
+- Predictive_Maintenance_Score rolling mean
+- Score change
+- Score decay slope
+- Short-term versus long-term score difference
+- Persistent score deterioration
+
+These features must not enter the core model by default.
+
+12.6 Persistence Features
+
+- Consecutive warning observations
+- Warning proportion in recent time window
+- High-risk proportion in recent time window
+- Time above threshold
+- Time since first elevated-risk observation
+- Model-agreement count
+
+===============================================================================
+13. ANOMALY DETECTION MODEL REQUIREMENTS
+===============================================================================
+
+13.1 Required Baseline Model
+
+Isolation Forest is the required primary baseline because it:
+- Works without failure labels.
+- Detects rare combinations.
+- Scales to the supplied dataset.
+- Produces a continuous anomaly score.
+
+Required tunable parameters:
+- n_estimators
+- contamination
+- max_samples
+- max_features
+- bootstrap
+- random_state
+
+13.2 Optional Advanced Model
+
+An autoencoder may be developed as an optional deep-learning variant.
+
+Requirements:
+- Train primarily on a carefully defined normal subset.
+- Use reconstruction error as the anomaly signal.
+- Apply early stopping.
+- Use a validation period later than the training period.
+- Avoid overfitting.
+- Report architecture, activation functions, optimizer, learning rate, batch size, and epochs.
+- Compare against Isolation Forest.
+- Do not use deep learning only for presentation value.
+
+13.3 Optional Supporting Models
+
+The project may evaluate:
+- Local Outlier Factor for offline comparison
+- One-Class SVM on a sampled or reduced feature space
+- Robust covariance where assumptions are reasonable
+- PCA reconstruction error
+- Clustering-distance methods
+
+These are supporting experiments, not mandatory production models.
+
+13.4 Ensemble Strategy
+
+Recommended production score:
+- Isolation Forest score
+- Optional autoencoder reconstruction score
+- Persistence score
+- Trend-escalation score
+
+The final score may use a weighted ensemble, but:
+- Every weight must be documented.
+- The result must be normalized.
+- The score must remain interpretable.
+- Model disagreement must be shown.
+- A simpler model should be preferred if performance is comparable.
+
+13.5 Machine-Aware Training Strategy
+
+Preferred options:
+- Global model trained on machine- and mode-normalized features.
+- Separate models by mode when sufficient data exists.
+- Machine-specific thresholds rather than 50 completely separate models unless evidence supports separate models.
+
+This balances personalization, sample size, maintainability, and generalization.
+
+===============================================================================
+14. TIME-AWARE TRAINING AND VALIDATION
+===============================================================================
+
+Random train-test splitting alone is prohibited for the primary evaluation.
+
+Required approach:
+- Sort data chronologically.
+- Use an earlier period for training.
+- Use a later period for validation.
+- Use the latest period for test or backtesting.
+- Fit scalers and baselines using training data only.
+- Prevent future information from entering historical features.
+- Recalculate rolling features using past data only.
+- Document all time boundaries.
+
+Recommended backtesting:
+- Expanding-window or rolling-window evaluation.
+- Compare alert performance across multiple time blocks.
+- Assess threshold stability over time.
+
+===============================================================================
+15. ANOMALY SCORE AND RISK CLASSIFICATION
+===============================================================================
+
+15.1 Score Direction
+
+The application must use:
+- 0 = least abnormal
+- 100 = most abnormal
+
+Native model scores must be transformed consistently.
+
+15.2 Default Risk Mapping
+
+Initial configurable percentile-based mapping:
+- Low Risk: below the 90th percentile
+- Medium Risk: 90th to below 97.5th percentile
+- High Risk: 97.5th percentile and above
+
+Thresholds should preferably be calibrated by machine-mode group when sample size is sufficient.
+
+15.3 Persistence Override
+
+A single extreme observation may be high risk, but persistent medium risk may also require escalation.
+
+Example rules:
+- Medium risk persisting across a configurable recent window can escalate to High.
+- High risk with weak evidence and immediate normalization may be downgraded to “Transient High”.
+- Model disagreement lowers evidence strength.
+- Multiple abnormal signals plus worsening trend raises evidence strength.
+
+15.4 Risk Terminology
+
+Low Risk:
+- Behavior is within expected range.
+- Action: Continue monitoring.
+
+Medium Risk:
+- Early deviation or persistent instability detected.
+- Action: Review recent history and schedule inspection if trend continues.
+
+High Risk:
+- Strong, persistent, or rapidly escalating deviation detected.
+- Action: Prioritize inspection and verify machine and sensor condition.
+
+15.5 No-Failure Disclaimer
+
+Risk level is not a confirmed failure probability unless a separately trained, labeled failure-probability model is later introduced.
+
+===============================================================================
+16. TEMPORAL RISK ESCALATION
+===============================================================================
+
+The system must identify:
+
+- Gradual score increase
+- Sudden score spike
+- Persistent elevated risk
+- Repeated anomaly bursts
+- Cross-signal escalation
+- Network instability preceding sensor instability
+- Quality deterioration following machine instability
+- Production decline following abnormal behavior
+- Risk reduction after maintenance-mode periods
+- Rebound into risk after temporary recovery
+
+Required escalation outputs:
+- Current score
+- Previous-period score
+- Score change
+- Trend direction
+- Persistence duration
+- First warning time
+- Latest warning time
+- Highest recent score
+- Escalation category
+- Evidence strength
+
+Suggested escalation categories:
+- Stable Normal
+- Watch
+- Slowly Escalating
+- Rapidly Escalating
+- Persistent High Risk
+- Recovering
+- Post-Maintenance Stable
+- Data Quality Concern
+
+===============================================================================
+17. PROXY EARLY-WARNING VALIDATION
+===============================================================================
+
+Because confirmed failure timestamps are absent, early-warning performance must use transparent proxy events.
+
+17.1 Permitted Proxy Events
+
+A future deterioration event may be defined as:
+- Transition to Efficiency_Status = Low
+- Significant future production-speed decline
+- Significant future error-rate increase
+- Significant future defect-rate increase
+- Entry into Maintenance mode
+- Strong future decline in Predictive_Maintenance_Score, used only as an external comparison
+
+17.2 Example Prediction Horizons
+
+Evaluate whether elevated anomaly risk occurs before deterioration within:
+- 1 hour
+- 6 hours
+- 24 hours
+- 72 hours
+
+The final horizons should reflect actual observation density.
+
+17.3 Proxy Early Warning Lead Time
+
+Definition:
+Time between the first sustained elevated-risk signal and the later proxy deterioration event.
+
+Display requirement:
+The dashboard and paper must label this as “Proxy Early Warning Lead Time,” not confirmed failure lead time.
+
+17.4 Evaluation Metrics
+
+- Precision at top K alerts
+- Recall of future deterioration events
+- Alert lead time
+- False-alert rate
+- Alerts per machine per day
+- Persistent-alert precision
+- Average score before deterioration
+- Score separation between stable and deteriorating periods
+- Stability across time windows
+- Stability across operation modes
+- Model agreement
+- Calibration by risk percentile
+
+===============================================================================
+18. KEY PERFORMANCE INDICATORS
+===============================================================================
+
+18.1 Observed KPIs
+
+These come directly from the data:
+- Total machines
+- Active machines in selected window
+- Operation-mode distribution
+- Average temperature
+- Average vibration
+- Average power consumption
+- Average latency
+- Average packet loss
+- Average defect rate
+- Average production speed
+- Average error rate
+- Efficiency-status distribution
+
+18.2 Model-Derived KPIs
+
+- Average anomaly score
+- High-risk machine count
+- Medium-risk machine count
+- Risk distribution
+- Escalating-machine count
+- Persistent-high-risk count
+- Alert volume
+- Model-agreement rate
+- Top contributing signal
+- Risk reduction after maintenance window
+
+18.3 Proxy KPIs
+
+These must display a “Proxy” badge:
+- Proxy Early Warning Lead Time
+- Proxy Downtime Prevention Index
+- Proxy Deterioration Capture Rate
+- Proxy Maintenance Priority Index
+- Estimated Avoided Breakdown Opportunity
+
+18.4 Downtime Prevention Index
+
+Since actual downtime is unavailable, the initial index must be a transparent relative indicator, not a monetary claim.
+
+Suggested composition:
+- Risk severity
+- Risk persistence
+- Production impact
+- Error and defect impact
+- Lead-time opportunity
+- Evidence strength
+
+Display:
+- 0–100 relative priority index
+- Clearly labeled “Proxy Downtime Prevention Index”
+- Explain calculation in a tooltip or methodology panel
+
+18.5 Maintenance Priority Index
+
+Suggested weighted factors:
+- Current anomaly score
+- Trend slope
+- Persistence
+- Production-speed decline
+- Error-rate increase
+- Defect-rate increase
+- Machine mode
+- Evidence strength
+
+All weights must be configurable and documented.
+
+===============================================================================
+19. STREAMLIT APPLICATION INFORMATION ARCHITECTURE
+===============================================================================
+
+Required pages:
+
+1. Executive Overview
+2. Fleet Risk Monitor
+3. Machine Diagnostic
+4. Alert Center
+5. Temporal Escalation
+6. Maintenance Impact
+7. Network Reliability
+8. Data and Model Quality
+9. Methodology and Limitations
+10. Report Export
+
+The sidebar must contain:
+- Date/time window selector
+- Machine selector
+- Operation-mode filter
+- Risk-level filter
+- Risk-threshold slider
+- Persistence setting
+- Model selector where multiple models exist
+- Reset filters button
+- Data refresh or reload control
+- Clear demo/live-data status indicator
+
+===============================================================================
+20. DASHBOARD MODULE REQUIREMENTS
+===============================================================================
+
+20.1 Executive Overview
+
+Purpose:
+Provide an immediate plant-wide understanding of risk and operational impact.
+
+Required components:
+- Total machines
+- High-risk machines
+- Escalating machines
+- Persistent alerts
+- Average anomaly score
+- Proxy early-warning lead time
+- Production speed
+- Defect rate
+- Error rate
+- Network reliability summary
+- Risk distribution
+- Top five maintenance priorities
+- Plant-level risk timeline
+- Plain-language executive insight
+- Recommended actions
+- Data and model limitation note
+
+Required narrative format:
+- What happened
+- Why it matters
+- What should happen next
+
+20.2 Fleet Risk Monitor
+
+Required components:
+- Searchable and sortable machine-risk table
+- Current score
+- Risk level
+- Trend
+- Persistence
+- Mode
+- Top abnormal signal
+- Evidence strength
+- Last observation
+- Recommended action
+- Filterable fleet heatmap
+- Risk by mode
+- Risk by time
+- Downloadable alert list
+
+20.3 Machine Diagnostic
+
+Required components:
+- Machine selector
+- Current machine health summary
+- Current mode
+- Anomaly score
+- Risk level
+- Trend status
+- Evidence strength
+- Sensor time series
+- Machine baseline overlays
+- Deviation bands
+- Top contributing features
+- Recent alert history
+- Comparable normal period
+- Plain-language diagnosis
+- Recommended inspection checklist
+- Data-quality warning where needed
+
+Sensor charts must support:
+- Temperature
+- Vibration
+- Power
+- Network latency
+- Packet loss
+- Defect rate
+- Production speed
+- Error rate
+- Existing predictive-maintenance score as a contextual overlay
+
+20.4 Alert Center
+
+Required components:
+- High-risk alerts
+- Medium-risk watchlist
+- Escalating alerts
+- Persistent alerts
+- Transient spike alerts
+- Network-related alerts
+- Data-quality alerts
+- Acknowledgement status
+- Priority
+- Suggested action
+- Explanation
+- Export
+
+Alert record fields:
+- Alert ID
+- Machine ID
+- Timestamp
+- Risk score
+- Risk level
+- Escalation category
+- Top contributing signals
+- Plain-language reason
+- Evidence strength
+- Recommended action
+- Acknowledgement state
+- Notes placeholder
+- Model version
+
+20.5 Temporal Escalation
+
+Required components:
+- Anomaly-score trend by machine
+- Risk-state timeline
+- Rolling trend slope
+- Persistence bands
+- Deterioration proxy markers
+- Maintenance-mode markers
+- Before-and-after windows
+- Escalation event table
+- Lead-time analysis
+- Cascade pattern exploration
+
+20.6 Maintenance Impact
+
+Purpose:
+Assess whether risk reduces after Maintenance-mode periods.
+
+Required components:
+- Detect candidate maintenance episodes from Maintenance mode.
+- Compare selected pre-maintenance and post-maintenance windows.
+- Show anomaly-score change.
+- Show sensor stabilization.
+- Show production and quality change.
+- Show confidence based on available observations.
+- Avoid causal claims when no intervention record exists.
+
+Required wording:
+“Observed post-maintenance-mode change” rather than “maintenance caused improvement.”
+
+20.7 Network Reliability
+
+Required components:
+- Latency trend
+- Packet-loss trend
+- Network instability index
+- Risk by latency band
+- Risk by packet-loss band
+- Operational anomaly versus network anomaly comparison
+- Lag analysis
+- Machine and mode filters
+- Explanation that correlation does not prove causation
+
+20.8 Data and Model Quality
+
+Required components:
+- Missing-value count
+- Duplicate count
+- Timestamp-quality summary
+- Observation coverage by machine
+- Observation gaps
+- Feature drift
+- Score drift
+- Alert-rate drift
+- Model version
+- Training period
+- Test period
+- Threshold configuration
+- Model comparison
+- False-alert estimate
+- Proxy-event evaluation
+
+20.9 Methodology and Limitations
+
+Required content:
+- Business problem
+- Dataset description
+- Feature groups
+- Model explanation
+- Risk mapping
+- Evaluation method
+- Proxy definition
+- Leakage controls
+- Limitations
+- Responsible-use statement
+- Glossary
+
+20.10 Report Export
+
+Required exports:
+- Filtered machine-risk CSV
+- Alert CSV
+- Machine diagnostic report
+- Executive summary
+- Model evaluation report
+- Data-quality report
+
+PDF generation may be included if reliable. HTML or CSV export is acceptable as a fallback.
+
+===============================================================================
+21. VISUALIZATION AND INTERPRETABILITY STANDARDS
+===============================================================================
+
+This section directly addresses prior project feedback that advanced dashboards lacked sufficient business context and explanatory notes.
+
+21.1 Every Major Chart Must Include
+
+- Clear title
+- One-line purpose
+- Human-readable axis labels
+- Unit labels
+- Legend
+- Definition tooltip
+- Selected-filter context
+- Short insight statement
+- Business implication
+- Recommended action where relevant
+- Observed, model-derived, or proxy badge
+
+21.2 Context Card Pattern
+
+For every major module, include a compact context panel:
+
+What the chart shows:
+A factual description.
+
+What changed:
+A quantified comparison against a previous period or baseline.
+
+Why it matters:
+Operational meaning.
+
+What may explain it:
+Top contributing signals, phrased as contributors rather than proven causes.
+
+Recommended action:
+A specific next step.
+
+Confidence:
+Evidence strength and limitation.
+
+21.3 Non-Technical Language Rules
+
+Prefer:
+- “Machine behavior is outside its normal range”
+over:
+- “Multivariate residual exceeds latent-space threshold”
+
+Prefer:
+- “Risk has increased steadily during the last six observations”
+over:
+- “Positive anomaly gradient”
+
+Technical detail may appear in an expandable section.
+
+21.4 Progressive Disclosure
+
+The initial view must be simple.
+Detailed statistical and model information must be available through:
+- Expanders
+- Tooltips
+- Methodology tabs
+- Downloadable reports
+
+21.5 Visual Semantics
+
+Use consistent risk colors:
+- Low: green
+- Medium: amber
+- High: red
+- Unknown or insufficient data: gray
+
+Do not rely on color alone.
+Include:
+- Text labels
+- Icons
+- Patterns or markers where possible
+
+21.6 Avoid Misleading Visuals
+
+- Do not truncate axes in a way that exaggerates change.
+- Do not use 3D charts.
+- Do not overload one chart with too many machines.
+- Do not show more precision than the data supports.
+- Do not imply causality from correlation.
+- Do not display proxy metrics without a proxy label.
+- Do not use decorative visuals that reduce readability.
+
+===============================================================================
+22. ALERT EXPLANATION REQUIREMENTS
+===============================================================================
+
+Each Medium or High alert must answer:
+
+- Which machine is affected?
+- When did the abnormal behavior start?
+- Is it persistent or transient?
+- Which signals are most abnormal?
+- How far are they from the machine’s normal behavior?
+- Is the risk increasing?
+- Is network instability involved?
+- Is production or quality being affected?
+- What action is recommended?
+- How strong is the evidence?
+
+Example plain-language alert:
+
+“Machine 17 has remained above its normal risk range for four recent observations. Vibration instability, rising error rate, and lower production speed are the main contributors. The pattern is escalating rather than a single spike. Inspect vibration sources and verify sensor calibration during the next maintenance window.”
+
+The application must avoid unsupported wording such as:
+“Machine 17 will fail in six hours.”
+
+===============================================================================
+23. RECOMMENDATION ENGINE REQUIREMENTS
+===============================================================================
+
+Recommendations must be rule-assisted and evidence-linked.
+
+Examples:
+
+High vibration deviation:
+- Inspect bearings, alignment, mounting, and rotating components.
+- Verify vibration sensor calibration.
+
+High temperature and power:
+- Inspect cooling, lubrication, load, and electrical demand.
+- Verify operating mode.
+
+High error and defect rates:
+- Inspect process setup, tooling, calibration, and material flow.
+- Review recent production changes.
+
+High network latency and packet loss:
+- Verify connectivity, gateway health, interference, and sensor transmission.
+- Determine whether the anomaly is operational or communication-related.
+
+Production-speed decline with rising risk:
+- Consider controlled load reduction.
+- Schedule inspection before further throughput loss.
+
+Data-quality concern:
+- Validate sensor and timestamp integrity before physical intervention.
+
+Recommendations must be presented as inspection guidance, not definitive diagnosis.
+
+===============================================================================
+24. USER FLOWS
+===============================================================================
+
+24.1 Executive Flow
+
+1. Open Executive Overview.
+2. Review plant-wide risk and top priorities.
+3. Read plain-language summary.
+4. Open the highest-priority machine.
+5. Review contributing signals and recommended action.
+6. Export executive summary.
+
+24.2 Maintenance Engineer Flow
+
+1. Open Alert Center.
+2. Filter to High Risk and Persistent.
+3. Select a machine.
+4. Inspect risk timeline and sensor deviations.
+5. Review explanation and checklist.
+6. Record or export the action recommendation.
+7. Later compare post-maintenance-mode behavior.
+
+24.3 Analyst Flow
+
+1. Open Data and Model Quality.
+2. Review coverage, gaps, score drift, and threshold behavior.
+3. Compare Isolation Forest and optional autoencoder.
+4. Inspect false alerts and proxy deterioration capture.
+5. Adjust threshold in an experiment.
+6. Save evaluation output without changing production defaults unintentionally.
+
+24.4 Government or Non-Technical Stakeholder Flow
+
+1. Open Executive Overview.
+2. Read KPI definitions and context notes.
+3. View risk distribution and operational impact.
+4. Read limitations.
+5. Export a one-page summary with recommendations.
+
+===============================================================================
+25. FUNCTIONAL REQUIREMENTS
+===============================================================================
+
+FR-001 Data Loading
+The application must load the supplied CSV from a configurable path.
+
+FR-002 Schema Validation
+The application must validate required columns and types.
+
+FR-003 Date Parsing
+The application must combine Date and Timestamp into a valid datetime.
+
+FR-004 Machine Filtering
+Users must be able to filter by one or more machines.
+
+FR-005 Mode Filtering
+Users must be able to filter by Active, Idle, and Maintenance.
+
+FR-006 Time Filtering
+Users must be able to select a date/time range.
+
+FR-007 Threshold Control
+Users must be able to adjust warning and high-risk sensitivity within safe bounds.
+
+FR-008 Baseline Computation
+The system must compute machine- and mode-aware baselines.
+
+FR-009 Feature Generation
+The system must generate leakage-safe temporal and deviation features.
+
+FR-010 Anomaly Scoring
+Every valid observation must receive an anomaly score.
+
+FR-011 Risk Mapping
+Every scored observation must receive a risk level.
+
+FR-012 Persistence Detection
+The system must detect persistent elevated risk.
+
+FR-013 Escalation Detection
+The system must classify risk trend and escalation.
+
+FR-014 Explainability
+Alerts must display top contributing signals.
+
+FR-015 Plain-Language Narrative
+Key pages must generate understandable summaries.
+
+FR-016 Fleet Prioritization
+The system must rank machines by maintenance priority.
+
+FR-017 Historical Analysis
+Users must be able to inspect machine risk over time.
+
+FR-018 Maintenance Comparison
+Users must be able to compare behavior around Maintenance-mode periods.
+
+FR-019 Network Analysis
+Users must be able to analyze latency and packet-loss relationships with risk.
+
+FR-020 Data Quality
+The application must display data-quality indicators.
+
+FR-021 Model Evaluation
+The application must display time-aware evaluation and proxy validation.
+
+FR-022 Export
+Users must be able to export alerts, scores, and reports.
+
+FR-023 Caching
+Expensive transformations and model loading must be cached appropriately.
+
+FR-024 Error Handling
+The application must display actionable errors rather than crash traces.
+
+FR-025 Configuration
+Thresholds, windows, and model paths must be configurable.
+
+FR-026 Model Versioning
+Every prediction output must reference a model version.
+
+FR-027 Demo Disclosure
+Any simulated live mode must be visibly labeled “Simulation”.
+
+FR-028 Limitation Disclosure
+Proxy and model limitations must be accessible from every relevant page.
+
+===============================================================================
+26. NON-FUNCTIONAL REQUIREMENTS
+===============================================================================
+
+26.1 Performance
+- Initial app load should be optimized for 100,000 records.
+- Filtering should feel interactive.
+- Models should be loaded from saved artifacts instead of retrained on every interaction.
+- Heavy computations should use caching.
+- Charts should downsample safely where needed.
+
+26.2 Reliability
+- Invalid filters must not crash the app.
+- Empty selections must show a helpful message.
+- Missing model artifacts must produce a clear recovery instruction.
+- The app must handle missing optional dependencies gracefully.
+
+26.3 Reproducibility
+- Fixed random seed.
+- Versioned dependencies.
+- Saved preprocessing pipeline.
+- Saved model artifact.
+- Saved feature list.
+- Saved threshold configuration.
+- Reproducible notebook or training script.
+
+26.4 Security
+- No hardcoded API keys.
+- No exposed secrets.
+- Validate uploaded file type and size if uploads are enabled.
+- Sanitize user-provided text.
+- Avoid arbitrary code execution.
+- Do not log sensitive file content unnecessarily.
+- Use environment variables for optional external services.
+
+26.5 Accessibility
+- Sufficient contrast.
+- Keyboard-accessible controls where Streamlit supports them.
+- Text alternatives for color-based status.
+- Readable font sizes.
+- Clear units and labels.
+- Avoid flashing animations.
+
+26.6 Maintainability
+- Modular project structure.
+- Separation of data, features, models, evaluation, UI, and reporting.
+- Central configuration.
+- Reusable chart and explanation components.
+- Clear docstrings and typing in critical code.
+- No single oversized application file.
+
+26.7 Deployment
+- Must run locally.
+- Must support Streamlit Community Cloud or another documented deployment.
+- Include requirements file.
+- Include environment example where needed.
+- Include start command.
+- Keep dataset and model sizes within deployment constraints.
+
+===============================================================================
+27. MODEL EXPLAINABILITY REQUIREMENTS
+===============================================================================
+
+For Isolation Forest, provide practical contribution estimates through one or more of:
+- Feature deviation ranking
+- Per-feature robust z-score magnitude
+- Leave-one-feature-out score sensitivity
+- Surrogate model explanation
+- SHAP on an appropriate surrogate with clear disclosure
+
+For autoencoder:
+- Per-feature reconstruction error
+- Ranked reconstruction contribution
+- Comparison with normal reconstruction range
+
+Do not claim that an explanation proves causality.
+
+Every high-risk alert must provide:
+- Top three to five contributing signals
+- Direction of deviation
+- Difference from normal baseline
+- Persistence information
+- Evidence-strength label
+
+===============================================================================
+28. EVALUATION AND ACCEPTANCE TESTING
+===============================================================================
+
+28.1 Data Tests
+- Required columns present.
+- Numeric columns parse correctly.
+- Date parsing succeeds.
+- Missing-value report is correct.
+- Duplicate detection is correct.
+- Machine and mode counts are correct.
+- Feature output contains no future leakage.
+- No infinite values after ratio features.
+
+28.2 Model Tests
+- Same seed produces reproducible baseline results.
+- Score direction is correct.
+- Score normalization stays between 0 and 100.
+- Threshold mapping is correct.
+- Risk labels are never null for valid rows.
+- Saved and reloaded model produces consistent scores.
+- Model handles an unseen but valid batch safely.
+
+28.3 Temporal Tests
+- Rolling features use past information only.
+- Training data precedes validation data.
+- Test data is not used for fitting.
+- Maintenance comparisons respect time order.
+- Lead-time calculations cannot be negative.
+
+28.4 UI Tests
+- Every page loads.
+- Filters update all dependent components.
+- Empty states are handled.
+- Exports reflect active filters.
+- Metric definitions are available.
+- Proxy badges appear.
+- High-risk alerts show an explanation and action.
+- No chart is displayed without a title and units.
+- Mobile and desktop layouts remain usable.
+
+28.5 Business Acceptance Tests
+- A non-technical reviewer can identify the highest-priority machine.
+- A reviewer can explain why the machine is high risk.
+- A reviewer can identify whether risk is escalating.
+- A reviewer can distinguish observed and proxy KPIs.
+- A reviewer can locate project limitations.
+- A maintenance engineer can derive a concrete inspection priority from the dashboard.
+
+===============================================================================
+29. ANALYTICAL OUTPUT TABLES
+===============================================================================
+
+29.1 Scored Observation Table
+
+Required columns:
+- datetime
+- Machine_ID
+- Operation_Mode
+- Source sensor fields
+- Engineered summary fields
+- anomaly_score_raw
+- anomaly_score_normalized
+- risk_level
+- risk_trend_slope
+- risk_persistence_count
+- escalation_category
+- top_contributing_features
+- evidence_strength
+- recommended_action
+- model_version
+
+29.2 Machine Summary Table
+
+Required columns:
+- Machine_ID
+- current_mode
+- latest_timestamp
+- current_anomaly_score
+- current_risk_level
+- recent_average_score
+- maximum_recent_score
+- trend
+- persistence
+- alert_count
+- primary_contributor
+- evidence_strength
+- maintenance_priority_index
+- recommended_action
+
+29.3 Alert Table
+
+Required columns:
+- alert_id
+- Machine_ID
+- alert_start
+- latest_alert_time
+- peak_score
+- current_score
+- risk_level
+- escalation_category
+- top_signals
+- production_impact
+- quality_impact
+- network_context
+- evidence_strength
+- recommended_action
+- proxy_flag
+- model_version
+
+===============================================================================
+30. REPORTING DELIVERABLES
+===============================================================================
+
+30.1 Research Paper
+
+Required structure:
+- Title
+- Abstract
+- Keywords
+- Introduction
+- Industrial and 6G context
+- Problem statement
+- Objectives
+- Dataset description
+- Data-quality assessment
+- Exploratory data analysis
+- Methodology
+- Feature engineering
+- Baseline modeling
+- Anomaly detection
+- Risk classification
+- Temporal escalation
+- Proxy early-warning validation
+- Results
+- Business interpretation
+- Dashboard design
+- Recommendations
+- Limitations
+- Future work
+- Conclusion
+- References
+- Appendix
+
+The paper must separate:
+- Facts observed in data
+- Model outputs
+- Proxy estimates
+- Recommendations
+
+30.2 Streamlit Dashboard
+
+Must include all required pages and user controls.
+Must use saved model artifacts.
+Must contain context and action guidance.
+
+30.3 Executive Summary
+
+Target length:
+One to three pages.
+
+Required content:
+- Problem
+- Approach
+- Major findings
+- Highest-risk patterns
+- Operational value
+- Priority recommendations
+- Limitations
+- Next-phase data requirements
+
+Language:
+Plain English, minimal mathematical notation.
+
+30.4 Technical Documentation
+
+Required:
+- README
+- Setup instructions
+- Data dictionary
+- Model card
+- Evaluation report
+- Architecture overview
+- Configuration guide
+- Deployment instructions
+- Known limitations
+- Responsible-use note
+
+30.5 Submission Package
+
+Suggested final package:
+- data/raw/Thales_Group_Manufacturing.csv
+- data/processed/
+- models/
+- reports/
+- notebooks/
+- src/
+- app/
+- tests/
+- assets/
+- config/
+- README.md
+- requirements.txt
+- .env.example
+- LICENSE
+- PRD.txt
+- TRD.txt
+- model_card.md
+- executive_summary.pdf or .md
+- research_paper.pdf
+- dashboard screenshots
+
+===============================================================================
+31. DESIGN DIRECTION
+===============================================================================
+
+The application should have a modern industrial intelligence aesthetic.
+
+Recommended principles:
+- Clean, professional, high-contrast interface
+- Industrial dark or neutral theme
+- Minimal decorative animation
+- Strong hierarchy
+- Consistent card spacing
+- Clear risk semantics
+- Responsive design
+- No visual clutter
+- No unnecessary 3D effects
+- No generic placeholder charts
+- No fake real-time claims
+
+Suggested visual identity:
+- Deep graphite background
+- Steel-gray surfaces
+- Cyan or electric-blue network accents
+- Green, amber, and red risk indicators
+- Monospaced font only for IDs and technical values
+- Readable sans-serif font for all primary content
+
+Dashboard must prioritize comprehension over visual spectacle.
+
+===============================================================================
+32. BUSINESS CONTEXT IMPROVEMENT REQUIREMENTS
+===============================================================================
+
+To improve upon the feedback from the previous project, this project must implement the following mandatory enhancements:
+
+1. Every major KPI must define what it means.
+2. Every major KPI must state whether higher or lower is desirable.
+3. Every chart must state the business question it answers.
+4. Every risk visualization must provide an operational action.
+5. Every anomaly must include a plain-language explanation.
+6. Every proxy metric must be visibly marked as a proxy.
+7. Every model result must include a limitation or evidence-strength indicator.
+8. Every page must avoid technical overload through progressive disclosure.
+9. The executive page must summarize decisions, not only metrics.
+10. Historical charts must include relevant maintenance and deterioration markers.
+11. Comparisons must use an explicit baseline or previous period.
+12. Alerts must distinguish transient spikes from persistent problems.
+13. Recommendations must be linked to abnormal signals.
+14. Network metrics must be connected to operational context.
+15. The application must show how filters affect the displayed results.
+16. The research paper must translate statistical findings into business implications.
+17. The dashboard must contain a glossary for non-technical users.
+18. Tooltips must explain anomaly score, persistence, evidence strength, and proxy lead time.
+19. Empty or insufficient-data states must be explained rather than hidden.
+20. The final presentation must explicitly state what the dataset cannot prove.
+
+===============================================================================
+33. RISKS AND MITIGATIONS
+===============================================================================
+
+Risk: No explicit failure label.
+Mitigation:
+Use unsupervised anomaly detection and transparent proxy validation. Recommend collecting actual failure and repair events.
+
+Risk: Existing Predictive_Maintenance_Score may cause leakage.
+Mitigation:
+Exclude it from the core model and use it only for contextual comparison or a clearly separated experiment.
+
+Risk: Efficiency_Status is heavily imbalanced.
+Mitigation:
+Do not use it as the anomaly target. Use stratified contextual analysis and appropriate metrics.
+
+Risk: Irregular per-machine sampling.
+Mitigation:
+Use timestamp-aware features and report observation coverage.
+
+Risk: Duplicate machine timestamps.
+Mitigation:
+Audit and resolve explicitly.
+
+Risk: Excessive false alerts.
+Mitigation:
+Use machine-mode thresholds, persistence logic, model agreement, and alert-rate monitoring.
+
+Risk: Anomaly does not equal failure.
+Mitigation:
+Use careful wording and require human validation.
+
+Risk: Network issues may look like machine issues.
+Mitigation:
+Separate network, sensor, and production contributor groups.
+
+Risk: Dashboard becomes overcrowded.
+Mitigation:
+Use a simple executive layer and progressive disclosure.
+
+Risk: Autoencoder adds complexity without value.
+Mitigation:
+Retain only if it improves time-aware proxy performance or alert quality.
+
+Risk: Simulated live data is misunderstood.
+Mitigation:
+Display a persistent “Simulation” badge and document the source.
+
+===============================================================================
+34. FUTURE DATA REQUIREMENTS
+===============================================================================
+
+For a true predictive-maintenance production system, future datasets should add:
+
+- Confirmed failure timestamp
+- Failure type
+- Failed component
+- Maintenance work-order ID
+- Maintenance start and end time
+- Maintenance action
+- Technician notes
+- Parts replaced
+- Downtime duration
+- Downtime cost
+- Production loss
+- Machine age
+- Machine model and manufacturer
+- Installation date
+- Service history
+- Load and environmental conditions
+- Sensor calibration history
+- Alarm logs
+- Remaining useful life label
+- Safety incident data
+- Higher-frequency sensor streams
+- Actual 6G network slice and quality-of-service metrics
+
+These additions would enable:
+- Supervised failure prediction
+- Remaining useful life estimation
+- Cost-benefit optimization
+- Failure-mode classification
+- Maintenance-action effectiveness analysis
+- More accurate lead-time and downtime-savings calculation
+
+===============================================================================
+35. FUTURE PRODUCT ROADMAP
+===============================================================================
+
+Phase 1: Analytical Prototype
+- Data audit
+- EDA
+- Isolation Forest
+- Risk mapping
+- Streamlit dashboard
+- Proxy evaluation
+- Reports
+
+Phase 2: Advanced Modeling
+- Autoencoder comparison
+- Ensemble score
+- Improved explainability
+- Drift monitoring
+- Alert feedback loop
+
+Phase 3: Operational Pilot
+- Live data pipeline
+- Work-order integration
+- Alert acknowledgement
+- Technician feedback
+- Verified failure labels
+- Cost and downtime analytics
+
+Phase 4: Enterprise Scale
+- Multi-factory support
+- Role-based access
+- API service
+- Streaming architecture
+- Model registry
+- Automated retraining governance
+- SLA and observability
+- Integration with MES, SCADA, CMMS, and ERP systems
+
+===============================================================================
+36. DEFINITION OF DONE
+===============================================================================
+
+The project is complete only when:
+
+- The raw data remains unchanged.
+- The cleaned data and data-quality report are generated.
+- The complete EDA is reproducible.
+- Baselines are machine- and mode-aware.
+- Leakage-safe engineered features are implemented.
+- Isolation Forest is trained and saved.
+- Optional models are compared fairly.
+- Every valid record is scored.
+- Risk levels and escalation categories are assigned.
+- Proxy early-warning analysis is completed.
+- High-risk machines are prioritized.
+- Alerts contain explanations and recommended actions.
+- The Streamlit dashboard satisfies all required modules.
+- Context and explanatory notes are visible throughout the dashboard.
+- Observed, model-derived, and proxy metrics are clearly distinguished.
+- Research paper is complete.
+- Executive summary is complete.
+- README and setup instructions are complete.
+- Model card and limitations are complete.
+- Automated tests pass.
+- Deployment works.
+- No API keys or secrets are committed.
+- No unsupported failure, savings, or causal claims are made.
+- Final screenshots and submission files are organized.
+
+===============================================================================
+37. ANTIGRAVITY IMPLEMENTATION DIRECTIVE
+===============================================================================
+
+When this PRD is provided to Antigravity, the agent must:
+
+1. Inspect the entire existing codebase and all supplied project documents before changing files.
+2. Inspect the real CSV schema and values; do not invent columns.
+3. Build against the supplied 100,000-row dataset.
+4. Preserve the raw dataset.
+5. Create a modular, reproducible project.
+6. Implement data validation before modeling.
+7. Prevent temporal and target leakage.
+8. Exclude Efficiency_Status and Predictive_Maintenance_Score from the core anomaly model.
+9. Build Isolation Forest as the mandatory baseline.
+10. Add the autoencoder only as an optional, justified comparison.
+11. Create machine- and mode-aware baseline features.
+12. Implement timestamp-aware risk trends and persistence.
+13. Label all proxy metrics clearly.
+14. Add business context and explanatory notes to every major visualization.
+15. Create plain-language alert explanations and recommended actions.
+16. Use saved pipelines and model artifacts.
+17. Add tests for data, features, model, and UI logic.
+18. Use no paid API or external service unless explicitly approved.
+19. Do not expose secrets.
+20. Do not use placeholder data in the final dashboard.
+21. Do not present simulated data as live.
+22. Do not claim a failure will occur at a specific time without validated labels.
+23. Maintain a professional industrial design with responsive layouts.
+24. Generate all required documentation and reports.
+25. Verify the application locally before marking the project complete.
+26. Report any requirement that cannot be implemented honestly from the available data.
+27. Prefer correctness, interpretability, and decision value over unnecessary complexity.
+
+===============================================================================
+38. FINAL PRODUCT POSITIONING
+===============================================================================
+
+FactoryGuard 6G is an anomaly-driven predictive-maintenance decision-support platform for intelligent manufacturing. It differs from a conventional efficiency-classification project because it focuses on emerging machine-health risk, temporal escalation, early warning, maintenance prioritization, and explainable operational action.
+
+Its strongest value is not merely detecting that a record is unusual. Its value is converting machine, production, quality, and network deviations into a clear operational workflow:
+
+Detect
+→ Validate
+→ Explain
+→ Prioritize
+→ Inspect
+→ Compare recovery
+→ Improve future monitoring
+
+The final solution must demonstrate analytical depth, technical integrity, responsible model communication, and practical value for manufacturing decision-makers.

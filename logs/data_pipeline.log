@@ -1,0 +1,63 @@
+2026-07-11 19:55:03,409 - factoryguard - INFO - Logging configured successfully.
+2026-07-11 19:55:03,410 - factoryguard.scripts.run_data_pipeline - INFO - Starting ingestion pipeline...
+2026-07-11 19:55:03,411 - src.factoryguard.data.loader - INFO - Ingesting raw CSV from D:\6G\data\raw...
+2026-07-11 19:55:03,412 - factoryguard.scripts.run_data_pipeline - ERROR - Pipeline failed: [Errno 13] Permission denied: 'D:\\6G\\data\\raw'
+Traceback (most recent call last):
+  File "D:\6G\scripts\run_data_pipeline.py", line 20, in main
+    df = run_ingestion_pipeline()
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\6G\src\factoryguard\data\loader.py", line 141, in run_ingestion_pipeline
+    df = load_raw_dataset(csv_path)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\6G\src\factoryguard\data\loader.py", line 21, in load_raw_dataset
+    df = pd.read_csv(csv_path)
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\6G\.venv\Lib\site-packages\pandas\io\parsers\readers.py", line 873, in read_csv
+    return _read(filepath_or_buffer, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\6G\.venv\Lib\site-packages\pandas\io\parsers\readers.py", line 300, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\6G\.venv\Lib\site-packages\pandas\io\parsers\readers.py", line 1645, in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\6G\.venv\Lib\site-packages\pandas\io\parsers\readers.py", line 1904, in _make_engine
+    self.handles = get_handle(
+                   ^^^^^^^^^^^
+  File "D:\6G\.venv\Lib\site-packages\pandas\io\common.py", line 930, in get_handle
+    handle = open(
+             ^^^^^
+PermissionError: [Errno 13] Permission denied: 'D:\\6G\\data\\raw'
+2026-07-11 19:56:03,580 - factoryguard - INFO - Logging configured successfully.
+2026-07-11 19:56:03,581 - factoryguard.scripts.run_data_pipeline - INFO - Starting ingestion pipeline...
+2026-07-11 19:56:03,583 - src.factoryguard.data.loader - INFO - Ingesting raw CSV from D:\6G\data\raw\Thales_Group_Manufacturing.csv...
+2026-07-11 19:56:04,862 - src.factoryguard.data.validator - INFO - Validating dataset columns...
+2026-07-11 19:56:05,044 - src.factoryguard.data.loader - INFO - Combining Date and Timestamp, sorting by Machine_ID and datetime...
+2026-07-11 19:56:08,916 - src.factoryguard.data.loader - INFO - Handling 28 duplicate machine timestamp combinations...
+2026-07-11 19:56:09,539 - src.factoryguard.data.loader - INFO - Deduplicated df shape: (99972, 16)
+2026-07-11 19:56:09,740 - src.factoryguard.data.loader - INFO - Saving validated data to Parquet format: D:\6G\data\interim\validated_data.parquet
+2026-07-11 19:56:21,444 - src.factoryguard.data.loader - INFO - Data pipeline completed successfully.
+2026-07-11 19:56:21,445 - factoryguard.scripts.run_data_pipeline - INFO - Pipeline finished. Loaded 99972 rows, 16 columns.
+2026-07-11 19:56:21,445 - factoryguard.scripts.run_data_pipeline - INFO - Interim Parquet and quality reports saved successfully.
+2026-07-11 20:51:24,532 - factoryguard - INFO - Logging configured successfully.
+2026-07-11 20:51:24,600 - factoryguard.scripts.run_data_pipeline - INFO - Starting ingestion pipeline...
+2026-07-11 20:51:24,602 - src.factoryguard.data.loader - INFO - Ingesting raw CSV from D:\6G\data\raw\Thales_Group_Manufacturing.csv...
+2026-07-11 20:51:25,348 - src.factoryguard.data.validator - INFO - Validating dataset columns...
+2026-07-11 20:51:25,420 - src.factoryguard.data.loader - INFO - Combining Date and Timestamp, sorting by Machine_ID and datetime...
+2026-07-11 20:51:26,835 - src.factoryguard.data.loader - INFO - Handling 28 duplicate machine timestamp combinations...
+2026-07-11 20:51:27,289 - src.factoryguard.data.loader - INFO - Deduplicated df shape: (99972, 16)
+2026-07-11 20:51:27,432 - src.factoryguard.data.loader - INFO - Saving validated data to Parquet format: D:\6G\data\interim\validated_data.parquet
+2026-07-11 20:51:28,156 - src.factoryguard.data.loader - INFO - Data pipeline completed successfully.
+2026-07-11 20:51:28,159 - factoryguard.scripts.run_data_pipeline - INFO - Pipeline finished. Loaded 99972 rows, 16 columns.
+2026-07-11 20:51:28,160 - factoryguard.scripts.run_data_pipeline - INFO - Interim Parquet and quality reports saved successfully.
+2026-07-11 20:54:14,273 - factoryguard - INFO - Logging configured successfully.
+2026-07-11 20:54:14,285 - factoryguard.scripts.run_data_pipeline - INFO - Starting ingestion pipeline...
+2026-07-11 20:54:14,285 - src.factoryguard.data.loader - INFO - Ingesting raw CSV from D:\6G\data\raw\Thales_Group_Manufacturing.csv...
+2026-07-11 20:54:14,749 - src.factoryguard.data.validator - INFO - Validating dataset columns...
+2026-07-11 20:54:14,826 - src.factoryguard.data.loader - INFO - Combining Date and Timestamp, sorting by Machine_ID and datetime...
+2026-07-11 20:54:16,047 - src.factoryguard.data.loader - INFO - Handling 28 duplicate machine timestamp combinations...
+2026-07-11 20:54:16,642 - src.factoryguard.data.loader - INFO - Deduplicated df shape: (99972, 16)
+2026-07-11 20:54:16,803 - src.factoryguard.data.loader - INFO - Saving validated data to Parquet format: D:\6G\data\interim\validated_data.parquet
+2026-07-11 20:54:17,256 - src.factoryguard.data.loader - INFO - Data pipeline completed successfully.
+2026-07-11 20:54:17,261 - factoryguard.scripts.run_data_pipeline - INFO - Pipeline finished. Loaded 99972 rows, 16 columns.
+2026-07-11 20:54:17,261 - factoryguard.scripts.run_data_pipeline - INFO - Interim Parquet and quality reports saved successfully.

@@ -1,0 +1,43 @@
+isolation_forest:
+  n_estimators: 100
+  max_samples: "auto"
+  contamination: 0.1
+  bootstrap: false
+  random_state: 42
+
+optuna:
+  n_trials_dev: 20
+  n_trials_final: 75
+  random_state: 42
+
+supervised_models:
+  random_forest:
+    n_estimators: 100
+    max_depth: 10
+    random_state: 42
+  extra_trees:
+    n_estimators: 100
+    max_depth: 10
+    random_state: 42
+  xgboost:
+    n_estimators: 100
+    max_depth: 5
+    learning_rate: 0.05
+    random_state: 42
+  lightgbm:
+    n_estimators: 100
+    max_depth: 5
+    learning_rate: 0.05
+    random_state: 42
+  catboost:
+    iterations: 100
+    depth: 5
+    learning_rate: 0.05
+    random_seed: 42
+  logistic_regression:
+    C: 1.0
+    random_state: 42
+
+risk_thresholds:
+  percentile_medium: 90.0
+  percentile_high: 97.5

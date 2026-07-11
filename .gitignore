@@ -1,0 +1,68 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Data and models
+data/interim/
+data/processed/
+data/features/
+data/predictions/
+data/reports/
+models/**/*.joblib
+models/**/*.pkl
+models/**/*.json
+models/**/*.onnx
+
+# Streamlit (keep config.toml for deployment theme)
+.streamlit/secrets.toml
+.streamlit/.cache/
+
+# Optuna study registry
+models/registry/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# CatBoost training cache
+catboost_info/

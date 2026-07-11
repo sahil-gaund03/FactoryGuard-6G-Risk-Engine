@@ -1,0 +1,23 @@
+project:
+  name: "FactoryGuard 6G"
+  version: "1.0.0"
+
+paths:
+  raw_data: "data/raw/Thales_Group_Manufacturing.csv"
+  interim_dir: "data/interim"
+  processed_dir: "data/processed"
+  features_dir: "data/features"
+  predictions_dir: "data/predictions"
+  reports_dir: "data/reports"
+  models_dir: "models"
+
+pipeline:
+  random_seed: 42
+  test_size_ratio: 0.2
+  split_date: "2025-02-25"  # Date to split train and test (chronological evaluation)
+  epsilon: 0.000001
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/factoryguard.log"
