@@ -46,12 +46,17 @@ def main():
         'Fused Risk Score', 'Evidence Strength', 'Recommended Action'
     ]
     
+    styler = alerts_display.style
+    style_func = lambda val: 'color: #ff5252; font-weight: bold;' if val == 'High' \
+                 else ('color: #ffb74d; font-weight: bold;' if val == 'Medium' else '')
+    
+    if hasattr(styler, 'map'):
+        styler = styler.map(style_func, subset=['Risk Level'])
+    else:
+        styler = styler.applymap(style_func, subset=['Risk Level'])
+        
     st.dataframe(
-        alerts_display.style.applymap(
-            lambda val: 'color: #ff5252; font-weight: bold;' if val == 'High'
-            else ('color: #ffb74d; font-weight: bold;' if val == 'Medium' else ''),
-            subset=['Risk Level']
-        ),
+        styler,
         use_container_width=True
     )
     

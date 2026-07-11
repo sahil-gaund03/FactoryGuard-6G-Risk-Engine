@@ -50,13 +50,18 @@ def main():
     latest_display.reset_index(drop=True, inplace=True)
     latest_display.index += 1
     
+    styler = latest_display.style
+    style_func = lambda val: 'background-color: #2c0c0e; color: #ff5252; font-weight: bold;' if val == 'High' \
+                 else ('background-color: #2c1e0c; color: #ffb74d; font-weight: bold;' if val == 'Medium' \
+                       else ('background-color: #0c2c12; color: #81c784; font-weight: bold;' if val == 'Low' else ''))
+    
+    if hasattr(styler, 'map'):
+        styler = styler.map(style_func, subset=['Risk Level'])
+    else:
+        styler = styler.applymap(style_func, subset=['Risk Level'])
+        
     st.dataframe(
-        latest_display.style.applymap(
-            lambda val: 'background-color: #2c0c0e; color: #ff5252; font-weight: bold;' if val == 'High'
-            else ('background-color: #2c1e0c; color: #ffb74d; font-weight: bold;' if val == 'Medium'
-                  else ('background-color: #0c2c12; color: #81c784; font-weight: bold;' if val == 'Low' else '')),
-            subset=['Risk Level']
-        ),
+        styler,
         use_container_width=True
     )
     
