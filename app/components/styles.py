@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+# Force Python string storage to prevent pyarrow string segmentation faults on Linux
+pd.options.mode.string_storage = "python"
+
 from pathlib import Path
 from src.factoryguard.paths import DATA_PROCESSED
 
