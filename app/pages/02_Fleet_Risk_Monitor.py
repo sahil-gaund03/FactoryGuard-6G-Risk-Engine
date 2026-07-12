@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 
 # Add project root to python path
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 
 from app.components.styles import load_custom_css, load_predictions_data
 from app.components.filters import render_sidebar_filters

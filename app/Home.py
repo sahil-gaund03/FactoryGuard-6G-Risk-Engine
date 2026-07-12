@@ -1,3 +1,6 @@
+import faulthandler
+faulthandler.enable()
+
 import streamlit as st
 import pandas as pd
 from pathlib import Path

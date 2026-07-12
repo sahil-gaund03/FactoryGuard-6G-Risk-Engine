@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 
 # Add project root to python path
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 
 from app.components.styles import load_custom_css
 from src.factoryguard.paths import DATA_REPORTS, REPORTS_DIR

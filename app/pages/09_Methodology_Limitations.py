@@ -1,4 +1,10 @@
 import streamlit as st
+from pathlib import Path
+import sys
+
+# Add project root to python path
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+
 from app.components.styles import load_custom_css
 
 st.set_page_config(page_title="Methodology & Limitations — FactoryGuard 6G", layout="wide")
